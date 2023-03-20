@@ -90,7 +90,7 @@ namespace SenseCapitalBackTask.Services
         /// Делает ход
         /// </summary>
         /// <param name="move">Ход</param>
-        /// <param name="playerId"></param>
+        /// <param name="playerId">Идентификатор текущего игрока</param>
         /// <param name="cancellationToken">Токен отмены</param>
         /// <returns>Обновленная модель игры</returns>
         /// <exception cref="ApplicationException"></exception>

@@ -29,7 +29,7 @@ namespace SenseCapitalBackTask.Models
             Whose = game.Whose,
             IsNew = game.Cells != null && game.Cells.Any(c => c.State != null),
             IsFinished = game.Cells != null && (game.Cells.Any(c => c.Mark) || game.Cells.All(c => c.State != null)),
-            WinnerId = game.Cells != null && game.Cells.FirstOrDefault(c => c.Mark)?.State == true ? game.CrossPlayerId : game.ZeroPlayerId,
+            WinnerId = game.Cells != null && game.Cells.Where(c => c.Mark == false).Count() == game.Cells.Count ? null : game.Cells.FirstOrDefault(c => c.Mark)?.State == true ? game.CrossPlayerId : game.ZeroPlayerId,
             Cells = game.Cells != null ? game.Cells.Select(CellsModel.Map).ToList() : new List<CellsModel?>()
         };
     }
