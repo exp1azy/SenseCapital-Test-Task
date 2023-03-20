@@ -1,0 +1,33 @@
+version: '3.4'
+
+networks:
+  mynetwork:
+     driver: bridge
+
+services:
+  sensecapitalbacktask:
+    image: ${DOCKER_REGISTRY-}sensecapitalbacktask
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    build:
+      context: .
+      dockerfile: SenseCapitalBackTask/Dockerfile
+    networks: 
+      - mynetwork
+
+  postgres:
+    image: postgres:latest
+    container_name: postgresql
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=TicTacToe
+    ports:
+      - 5433:5432
+    restart: always
+    volumes:
+      - ./SenseCapitalBackTask/inidb:/docker-entrypoint-initdb.d
+    networks:
+      - mynetwork
