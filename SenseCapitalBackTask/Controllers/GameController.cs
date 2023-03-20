@@ -61,7 +61,7 @@ namespace SenseCapitalBackTask.Controllers
         {
             try
             {
-                var response = await _gameService.MakeMoveAsync(move, cancellationToken);
+                var response = await _gameService.MakeMoveAsync(move, HttpContext.GetPlayer().Id, cancellationToken);
 
                 return Ok(response);
             }

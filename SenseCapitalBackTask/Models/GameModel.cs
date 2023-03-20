@@ -17,7 +17,9 @@ namespace SenseCapitalBackTask.Models
 
         public bool IsFinished { get; set; } // Закончена ли игра
 
-        public ICollection<CellsModel> Cells { get; set; } // Клетки игрового поля
+        public int? WinnerId { get; set; } // Идентификатор победителя
+
+        public ICollection<CellsModel?> Cells { get; set; } // Клетки игрового поля
 
         public static GameModel? Map(Game game) => game == null ? null : new GameModel() // Возвращает модель таблицы
         {
@@ -26,8 +28,9 @@ namespace SenseCapitalBackTask.Models
             CrossId = game.CrossPlayerId,
             Whose = game.Whose,
             IsNew = game.Cells != null && game.Cells.Any(c => c.State != null),
-            IsFinished = game.Cells != null && game.Cells.Any(c => c.Mark),
-            Cells = game.Cells != null ? game.Cells.Select(CellsModel.Map).ToList() : null
+            IsFinished = game.Cells != null && (game.Cells.Any(c => c.Mark) || game.Cells.All(c => c.State != null)),
+            WinnerId = game.Cells != null && game.Cells.FirstOrDefault(c => c.Mark)?.State == true ? game.CrossPlayerId : game.ZeroPlayerId,
+            Cells = game.Cells != null ? game.Cells.Select(CellsModel.Map).ToList() : new List<CellsModel?>()
         };
     }
 }

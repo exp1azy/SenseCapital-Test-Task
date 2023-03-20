@@ -90,10 +90,11 @@ namespace SenseCapitalBackTask.Services
         /// Делает ход
         /// </summary>
         /// <param name="move">Ход</param>
+        /// <param name="playerId"></param>
         /// <param name="cancellationToken">Токен отмены</param>
         /// <returns>Обновленная модель игры</returns>
         /// <exception cref="ApplicationException"></exception>
-        public async Task<GameModel> MakeMoveAsync(GameMoveModel move, CancellationToken cancellationToken)
+        public async Task<GameModel> MakeMoveAsync(GameMoveModel move, int playerId, CancellationToken cancellationToken)
         {
             var game = await _dataContext.Game.Include(g => g.Cells).Where(i => i.Id == move.GameId).FirstOrDefaultAsync(cancellationToken);
             if (game == null)
@@ -102,18 +103,18 @@ namespace SenseCapitalBackTask.Services
             if (game.Cells.Any(c => c.Mark))
                 throw new ApplicationException("Игра завершена");
 
-            var cell = game.Cells.FirstOrDefault(c => c.Row == move.Row);
+            var cell = game.Cells.FirstOrDefault(c => c.Row == move.Row && c.Col == move.Col);
             if (cell == null)
                 throw new ApplicationException("Ячейка не найдена");
 
             if (cell.State != null)
                 throw new ApplicationException("Ячейка занята");
 
-            if (game.Whose != move.PlayerId)
+            if (game.Whose != playerId)
                 throw new ApplicationException("Ход другого игрока");
 
-            cell.State = move.PlayerId == game.CrossPlayerId;
-            game.Whose = move.PlayerId == game.CrossPlayerId ? game.ZeroPlayerId : game.CrossPlayerId;
+            cell.State = playerId == game.CrossPlayerId;
+            game.Whose = playerId == game.CrossPlayerId ? game.ZeroPlayerId : game.CrossPlayerId;
 
             CheckGameFinished(game);
 
